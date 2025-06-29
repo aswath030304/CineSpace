@@ -27,11 +27,11 @@ function isWithinDays(dateStr, daysBefore = 40, daysAfter = 10) {
 
 async function fetchByLanguageAndGenres(langList, genreStr) {
   const url = `https://api.themoviedb.org/3/discover/movie` +
-              `?api_key=${API_KEY}` +
-              `&with_genres=${genreStr}` +
-              `&sort_by=popularity.desc` +
-              `&with_original_language=${langList.join("|")}` +
-              `&region=IN&page=1`;
+    `?api_key=${API_KEY}` +
+    `&with_genres=${genreStr}` +
+    `&sort_by=popularity.desc` +
+    `&with_original_language=${langList.join("|")}` +
+    `&region=IN&page=1`;
 
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -70,16 +70,17 @@ async function fetchMoviesByGenre() {
       </p>`;
       return;
     }
-
     container.innerHTML = filtered.map(movie => `
-      <a href="/moviedetails?movie_id=${movie.id}"> 
-         class="movie-card p-2 hover:shadow-md transition-transform">
-        <img src="${IMAGE_BASE}${movie.poster_path}" alt="${movie.title}" />
-        <h3 class="mt-2 font-semibold text-center text-sm truncate w-40 mx-auto">
-          ${movie.title}
-        </h3>
-        <p class="text-sm text-gray-500">⭐ ${movie.vote_average}</p>
-      </a>`).join('');
+  <a href="/moviedetails?movie_id=${movie.id}" 
+     class="movie-card p-2 hover:shadow-md transition-transform block text-center">
+    <img src="${IMAGE_BASE}${movie.poster_path}" alt="${movie.title}" class="w-full rounded-md" />
+    <h3 class="mt-2 font-semibold text-sm truncate w-40 mx-auto">
+      ${movie.title}
+    </h3>
+    <p class="text-sm text-gray-500">⭐ ${movie.vote_average}</p>
+  </a>
+`).join('');
+
 
   } catch (err) {
     console.error("Error:", err);
@@ -92,3 +93,4 @@ async function fetchMoviesByGenre() {
 
 
 fetchMoviesByGenre();
+
