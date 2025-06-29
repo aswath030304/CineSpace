@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Booking Confirmation - CineSpace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Your CineSpace movie ticket booking confirmation with QR code and seat details." />
+  <link rel="icon" href="{{ url_for('static', filename='assets/image/Logo.png') }}" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center px-4">
+
+  <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+    <h1 class="text-3xl font-bold mb-4 text-green-600">🎉 Booking Confirmed!</h1>
+
+    <div class="mb-6 text-left text-base">
+      <p class="mb-2"><span class="font-semibold text-gray-700">🎬 Movie:</span> {{ movie_name or 'Unknown' }}</p>
+      <p class="mb-2"><span class="font-semibold text-gray-700">📅 Date:</span> {{ show_date or 'N/A' }}</p>
+      <p class="mb-2"><span class="font-semibold text-gray-700">⏰ Time:</span> {{ show_time or 'N/A' }}</p>
+      <p class="mb-2"><span class="font-semibold text-gray-700">💺 Seats:</span> {{ seat_numbers or 'N/A' }}</p>
+      <p class="mt-4 text-lg font-bold text-blue-700">Total Price: ₹{{ total_price or 200 }}</p>
+    </div>
+
+    <div class="mb-6">
+      <p class="font-medium mb-2">📲 Scan this QR Code at Entry:</p>
+      {% if qr_code_url %}
+        <img src="{{ qr_code_url }}" alt="QR Code" class="mx-auto w-40 h-40 border rounded shadow-lg" />
+      {% else %}
+        <div class="w-40 h-40 flex items-center justify-center mx-auto border rounded bg-gray-100 text-sm text-gray-500">QR Not Available</div>
+      {% endif %}
+    </div>
+
+    <a href="{{ url_for('home') }}" class="inline-block mt-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md shadow transition">
+      ⬅ Back to Home
+    </a>
+  </div>
+  <script>
+    // Read data from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const qr = urlParams.get("qr");
+    const movie = urlParams.get("movie");
+    const seats = urlParams.get("seats");
+    const date = urlParams.get("date");
+    const time = urlParams.get("time");
+
+    // Fill in the data or show fallback
+    document.getElementById("movieName").textContent = movie ? decodeURIComponent(movie) : "Unknown";
+    document.getElementById("showDate").textContent = date || "Not available";
+    document.getElementById("showTime").textContent = time || "Not available";
+    document.getElementById("seatNumbers").textContent = seats || "Not available";
+
+    // Handle QR code image
+    const qrCodeImg = document.getElementById("qrCodeImage");
+    if (qr) {
+      qrCodeImg.src = decodeURIComponent(qr);
+    } else {
+      qrCodeImg.alt = "QR code not available";
+      qrCodeImg.classList.add("opacity-50");
+    }
+  </script>
+
+</body>
+
+</html>
