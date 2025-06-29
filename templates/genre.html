@@ -75,10 +75,20 @@
         class="block text-gray-700 hover:text-red-500">Fantasy</a> <a href="{{ url_for('orders') }}"
         class="block text-gray-700 hover:text-red-500">Orders</a>
     </div>
-  </nav> <!-- Language Section -->
-  <div id="language">
-    <h2 id="language-title" class="text-2xl font-bold mb-4 uppercase tracking-wide">Language: </h2>
-    <div id="language-container" class="flex flex-wrap justify-center gap-6 p-4"></div>
+  <!-- Genre Title -->
+  <section class="py-6 text-center">
+    <h1 id="genre-title" class="text-3xl font-bold text-red-600 uppercase tracking-wide">
+      Genre: 
+    </h1>
+  </section>
+
+  <!-- Movies Grid -->
+  <section class="max-w-7xl mx-auto px-4 pb-10">
+    <div id="movies-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
+      <!-- Movie cards will be injected here by genre.js -->
+    </div>
+  </section>
+
   </div> <!-- Help -->
   <p class="font-semibold text-center px-5 mt-5 sm:px-3 sm:mt-3">🎬 Can't find what you're looking for? Head back to the
     <a class="text-blue-600 hover:text-red-500 transition-all duration-300" href="{{ url_for('index') }}">Home Page</a>
