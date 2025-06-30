@@ -1,4 +1,4 @@
-const API_KEY = "08cea072574b840d375fdec0cee559a1";
+//const API_KEY = "08cea072574b840d375fdec0cee559a1";
 // const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
 const genreParam = new URLSearchParams(window.location.search).get("genre") || "action";
