@@ -81,11 +81,11 @@ def admin_logout():
     session.pop('admin', None)
     return redirect('/')
 
-# Admin Dashboard
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if session.get('admin'):
         conn = sqlite3.connect('database/cinespace.db')
+        conn.row_factory = sqlite3.Row  
         cursor = conn.cursor()
         cursor.execute("""
             SELECT bookings.id, users.username, bookings.movie_title,
@@ -98,6 +98,7 @@ def admin_dashboard():
         return render_template('admin_dashboard.html', bookings=bookings)
     else:
         return redirect('/admin/login')
+
 
 # User Logout
 @app.route('/logout')

@@ -27,7 +27,8 @@
             <p class="mb-2"><span class="font-semibold text-gray-700">💺 Seats:</span> <span id="seatNumbers">{{
                     seat_numbers or 'N/A' }}</span></p>
 
-            <p class="mt-4 text-lg font-bold text-blue-700">Total Price: ₹{{ total_price or 200 }}</p>
+            <p class="mt-4 text-lg font-bold text-blue-700" id="totalPrice">Total Price: ₹200</p>
+
         </div>
 
         <div class="mb-6">
@@ -120,31 +121,40 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const qr = urlParams.get("qr");
-            const movie = urlParams.get("movie");
-            const seats = urlParams.get("seats");
-            const date = urlParams.get("date");
-            const time = urlParams.get("time");
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const qr = urlParams.get("qr");
+        const movie = urlParams.get("movie");
+        const seats = urlParams.get("seats");
+        const date = urlParams.get("date");
+        const time = urlParams.get("time");
 
-            const movieName = document.getElementById("movieName");
-            const showDate = document.getElementById("showDate");
-            const showTime = document.getElementById("showTime");
-            const seatNumbers = document.getElementById("seatNumbers");
-            const qrCodeImg = document.getElementById("qrCodeImage");
+        const movieName = document.getElementById("movieName");
+        const showDate = document.getElementById("showDate");
+        const showTime = document.getElementById("showTime");
+        const seatNumbers = document.getElementById("seatNumbers");
+        const qrCodeImg = document.getElementById("qrCodeImage");
+        const totalPriceElement = document.getElementById("totalPrice");
 
-            if (movieName) movieName.textContent = movie ? decodeURIComponent(movie) : "Unknown";
-            if (showDate) showDate.textContent = date || "Not available";
-            if (showTime) showTime.textContent = time || "Not available";
-            if (seatNumbers) seatNumbers.textContent = seats || "Not available";
+        if (movieName) movieName.textContent = movie ? decodeURIComponent(movie) : "Unknown";
+        if (showDate) showDate.textContent = date || "Not available";
+        if (showTime) showTime.textContent = time || "Not available";
+        if (seatNumbers) seatNumbers.textContent = seats || "Not available";
 
-            if (qrCodeImg && qr) {
-                qrCodeImg.src = decodeURIComponent(qr);
-            }
-        });
-    </script>
+        if (qrCodeImg && qr) {
+            qrCodeImg.src = decodeURIComponent(qr);
+        }
+
+        // ✅ Calculate total price AFTER setting seatNumbers
+        if (seats && totalPriceElement) {
+            const seatCount = seats.split(',').filter(Boolean).length;
+            const totalPrice = seatCount * 200;
+            totalPriceElement.textContent = `Total Price: ₹${totalPrice}`;
+        }
+    });
+</script>
+
 
 
 </body>

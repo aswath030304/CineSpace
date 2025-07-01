@@ -6,7 +6,6 @@ from datetime import datetime
 booking_bp = Blueprint('booking', __name__)  
 DB_PATH = 'database/cinespace.db'
 
-
 def get_db():
     return sqlite3.connect(DB_PATH)
 
@@ -22,13 +21,23 @@ def book_ticket():
         print("❌ Missing fields in data")
         return jsonify({"status": "fail", "message": "Missing fields"})
 
-    seat_str = ', '.join(data['seats']) if isinstance(data['seats'], list) else data['seats']
+    # 🎯 Handle seats and calculate price
+    if isinstance(data['seats'], list):
+        seat_list = data['seats']
+    else:
+        seat_list = [s.strip() for s in data['seats'].split(',') if s.strip()]
+    
+    seat_str = ', '.join(seat_list)
+    price = len(seat_list) * 200  # ✅ Dynamic total price
+
+    # 🧾 Prepare summary for QR
     summary = (
         f"Movie: {data['movie_title']}\n"
         f"Date: {data['show_date']} | Time: {data['show_time']}\n"
-        f"Seats: {seat_str}\nPrice: ₹200"
+        f"Seats: {seat_str}\nPrice: ₹{price}"
     )
 
+    # 📦 QR Code Generation
     qr_folder = os.path.join('static', 'qrcodes')
     os.makedirs(qr_folder, exist_ok=True)
     filename = f"{data['user_id']}_{int(datetime.now().timestamp())}.png"
@@ -44,7 +53,7 @@ def book_ticket():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             data['user_id'], data['movie_id'], data['movie_title'],
-            data['show_date'], data['show_time'], seat_str, 200, qr_path
+            data['show_date'], data['show_time'], seat_str, price, qr_path
         ))
         conn.commit()
         conn.close()
@@ -57,7 +66,7 @@ def book_ticket():
                 "date": data['show_date'],
                 "time": data['show_time'],
                 "seats": seat_str,
-                "price": 200,
+                "price": price,
                 "qr_code": "/" + qr_path.replace("\\", "/")
             }
         })
@@ -131,7 +140,7 @@ def get_orders():
                 "show_time": time,
                 "seats": seats,
                 "price": price,
-                "qr_code": "/" + qr_code.replace("\\", "/"),  # Windows path fix
+                "qr_code": "/" + qr_code.replace("\\", "/"),
                 "poster_path": poster_path
             })
 
