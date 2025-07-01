@@ -138,32 +138,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Modal Helpers -->
-  <script>
-    function closeModal() {
-      document.getElementById("authModal").classList.add("hidden");
-    }
-
-    function toggleToLogin() {
-      document.getElementById("loginForm").classList.remove("hidden");
-      document.getElementById("signupForm").classList.add("hidden");
-      document.getElementById("forgotForm").classList.add("hidden");
-    }
-
-    function showMessage(message, type = "success") {
-      const box = document.getElementById("messageBox");
-      if (!box) return;
-
-      box.textContent = message;
-      box.classList.remove("hidden");
-      box.className = `p-3 my-2 rounded text-sm font-semibold text-white text-center ${type === "success" ? "bg-green-600" : "bg-red-600"}`;
-
-      setTimeout(() => {
-        box.classList.add("hidden");
-      }, 4000);
-    }
-  </script>
 </body>
 
 </html>

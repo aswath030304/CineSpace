@@ -153,47 +153,50 @@ const TMDB_API_KEY = "08cea072574b840d375fdec0cee559a1";
 
 let basePath = "/moviedetails";
 
-searchInput.addEventListener("input", async (e) => {
-  const query = e.target.value.trim();
-  if (query.length < 2) {
-    resultsBox.classList.add("hidden");
-    resultsBox.innerHTML = "";
-    return;
-  }
-
-  try {
-    const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
-    const data = await res.json();
-
-    const movies = data.results.filter(movie =>
-      movie.original_language !== "ja" &&
-      movie.original_language !== "ko" &&
-      !movie.adult
-    ).slice(0, 5); // Only show top 5 clean results
-
-    if (movies.length === 0) {
-      resultsBox.innerHTML = `<p class="p-2 text-gray-500">No results found.</p>`;
-      resultsBox.classList.remove("hidden");
+if (searchInput && resultsBox) {
+  searchInput.addEventListener("input", async (e) => {
+    const query = e.target.value.trim();
+    if (query.length < 2) {
+      resultsBox.classList.add("hidden");
+      resultsBox.innerHTML = "";
       return;
     }
 
-    resultsBox.innerHTML = movies.map(movie => `
-      <a href="${basePath}?movie_id=${movie.id}" class="block px-3 py-2 hover:bg-gray-100 text-sm">
-        ${movie.title}
-      </a>
-    `).join("");
+    try {
+      const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+      const data = await res.json();
 
-    resultsBox.classList.remove("hidden");
-  } catch (err) {
-    console.error("Search error:", err);
-  }
-});
+      const movies = data.results.filter(movie =>
+        movie.original_language !== "ja" &&
+        movie.original_language !== "ko" &&
+        !movie.adult
+      ).slice(0, 5);
 
-searchInput.addEventListener("blur", () => {
-  setTimeout(() => {
-    resultsBox.classList.add("hidden");
-  }, 150);
-});
+      if (movies.length === 0) {
+        resultsBox.innerHTML = `<p class="p-2 text-gray-500">No results found.</p>`;
+        resultsBox.classList.remove("hidden");
+        return;
+      }
+
+      resultsBox.innerHTML = movies.map(movie => `
+        <a href="${basePath}?movie_id=${movie.id}" class="block px-3 py-2 hover:bg-gray-100 text-sm">
+          ${movie.title}
+        </a>
+      `).join("");
+
+      resultsBox.classList.remove("hidden");
+    } catch (err) {
+      console.error("Search error:", err);
+    }
+  });
+
+  searchInput.addEventListener("blur", () => {
+    setTimeout(() => {
+      resultsBox.classList.add("hidden");
+    }, 150);
+  });
+}
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -202,9 +205,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const TMDB_API_KEY = "08cea072574b840d375fdec0cee559a1";
 
   // Correct path adjustments based on page depth
-// const isBooking = location.pathname.includes("/booking/");
-// const isPages = location.pathname.includes("/pages/");
-const mobileBasePath = "/moviedetails";
+  // const isBooking = location.pathname.includes("/booking/");
+  // const isPages = location.pathname.includes("/pages/");
+  const mobileBasePath = "/moviedetails";
 
   if (mobileSearchInput && mobileResultsBox) {
     mobileSearchInput.addEventListener("input", async (e) => {
@@ -247,24 +250,9 @@ const mobileBasePath = "/moviedetails";
   }
 });
 const API_BASEs = "";
-
-// Show login modal
-function openModal() {
-  document.getElementById("authModal").classList.remove("hidden");
-  toggleToLogin();
-}
-
 function closeModal() {
   document.getElementById("authModal").classList.add("hidden");
 }
-
-// Toggle views
-function toggleToLogin() {
-  document.getElementById("loginForm").classList.remove("hidden");
-  document.getElementById("signupForm").classList.add("hidden");
-  document.getElementById("forgotForm").classList.add("hidden");
-}
-
 function toggleToSignup() {
   document.getElementById("loginForm").classList.add("hidden");
   document.getElementById("signupForm").classList.remove("hidden");
@@ -276,199 +264,149 @@ function toggleToForgot() {
   document.getElementById("signupForm").classList.add("hidden");
   document.getElementById("forgotForm").classList.remove("hidden");
 }
-
-// ✅ Sign Up
-document.querySelector("#signupBtn").addEventListener("click", async () => {
-  const username = document.getElementById("signupName").value.trim();
-  const phone = document.getElementById("signupPhone").value.trim();
-  const email = document.getElementById("signupEmail").value.trim();
-  const password = document.getElementById("signupPassword").value.trim();
-  const security_question = document.getElementById("signupQuestion").value;
-  const security_answer = document.getElementById("signupAnswer").value.trim();
-
-  if (!username || !email || !password || !security_question || !security_answer) {
-    showMessage("Please fill all fields.", "error");
-    return;
+  function openModal() {
+    document.getElementById("authModal").classList.remove("hidden");
+    toggleToLogin();
   }
 
-  const pwdRegex = /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
-  if (!pwdRegex.test(password)) {
-    showMessage("Password must be at least 8 characters, include 1 capital letter and 1 special character.", "error");
-    return;
-  }
 
-  try {
-    const res = await fetch(`${API_BASEs}/api/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password, phone, security_question, security_answer }),
+
+  function toggleToLogin() {
+    document.getElementById("loginForm").classList.remove("hidden");
+    document.getElementById("signupForm").classList.add("hidden");
+    document.getElementById("forgotForm").classList.add("hidden");
+  }
+document.addEventListener("DOMContentLoaded", () => {
+  // Put EVERYTHING inside this block 👇👇👇
+
+  // ✅ Login Event
+  const loginBtn = document.querySelector("#loginBtn");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      if (!email || !password) {
+        showMessage("Please enter both email and password.", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASEs}/api/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        showMessage(data.message, data.status === "success" ? "success" : "error");
+
+        if (data.status === "success") {
+          localStorage.setItem("user_id", data.user_id);
+          localStorage.setItem("username", data.username);
+          localStorage.setItem("email", data.email);
+          updateUserUI();
+          closeModal();
+        }
+      } catch (err) {
+        showMessage("Login failed. Try again.", "error");
+        console.error(err);
+      }
     });
-
-    const data = await res.json();
-    showMessage(data.message, data.status === "success" ? "success" : "error");
-
-    if (data.status === "success") {
-      // Sign up successful, but do NOT auto-login
-      // Optionally, you can switch to login tab automatically:
-      toggleToLogin();
-    }
-
-  } catch (err) {
-    showMessage("Signup failed. Please try again.", "error");
-    console.error(err);
-  }
-});
-
-
-// ✅ Login Handler
-document.querySelector("#loginBtn").addEventListener("click", async () => {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-
-  if (!email || !password) {
-    showMessage("Please enter both email and password.", "error");
-    return;
   }
 
-  try {
-    const res = await fetch(`${API_BASEs}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+  // ✅ Signup Event
+  const signupBtn = document.querySelector("#signupBtn");
+  if (signupBtn) {
+    signupBtn.addEventListener("click", async () => {
+      const username = document.getElementById("signupName").value.trim();
+      const phone = document.getElementById("signupPhone").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+      const security_question = document.getElementById("signupQuestion").value;
+      const security_answer = document.getElementById("signupAnswer").value.trim();
+
+      if (!username || !email || !password || !security_question || !security_answer) {
+        showMessage("Please fill all fields.", "error");
+        return;
+      }
+
+      const pwdRegex = /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+      if (!pwdRegex.test(password)) {
+        showMessage("Password must be at least 8 characters, include 1 capital letter and 1 special character.", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASEs}/api/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password, phone, security_question, security_answer }),
+        });
+
+        const data = await res.json();
+        showMessage(data.message, data.status === "success" ? "success" : "error");
+
+        if (data.status === "success") {
+          toggleToLogin();
+        }
+
+      } catch (err) {
+        showMessage("Signup failed. Please try again.", "error");
+        console.error(err);
+      }
     });
-
-    const data = await res.json();
-    showMessage(data.message, data.status === "success" ? "success" : "error");
-
-    if (data.status === "success") {
-      localStorage.setItem("user_id", data.user_id);
-      localStorage.setItem("username", data.username);
-      localStorage.setItem("email", data.email);
-      updateUserUI();
-      closeModal(); // You can delay this if you want to let the user see the message first
-    }
-  } catch (err) {
-    showMessage("Login failed. Try again.", "error");
-    console.error(err);
-  }
-});
-
-
-
-// ✅ Forgot Password - Get Question
-async function getSecurityQuestion() {
-  const email = document.getElementById("forgotEmail").value.trim();
-  if (!email) {
-    alert("Please enter your email.");
-    return;
   }
 
-  const question = prompt("Enter your security question (e.g., What is your favorite movie?)");
-  if (!question) return;
-
-  document.getElementById("displayQuestion").textContent = question;
-  document.getElementById("securityQSection").classList.remove("hidden");
-
-  // Store temporarily
-  window.recoveryEmail = email;
-  window.recoveryQuestion = question;
-}
-
-// ✅ Verify Security Answer
-async function verifyAnswer() {
-  const answer = document.getElementById("answerInput").value.trim();
-  const email = window.recoveryEmail;
-  const question = window.recoveryQuestion;
-
-  if (!answer) {
-    alert("Please enter your answer.");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API_BASE}/recover`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, security_question: question, security_answer: answer }),
+  // ✅ Sign In Button behavior
+  const signInBtn = document.getElementById("signInBtn");
+  if (signInBtn) {
+    signInBtn.addEventListener("click", () => {
+      const name = localStorage.getItem("username");
+      if (name) {
+        if (confirm(`You're logged in as ${name}. Do you want to logout?`)) {
+          logout();
+        }
+      } else {
+        openModal();
+      }
     });
+  }
 
-    const data = await res.json();
+  function logout() {
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    localStorage.removeItem('phone');
+    localStorage.removeItem('isLoggedIn');
+    sessionStorage.clear();
+    updateUserUI();
+    fetch('/logout').then(() => window.location.href = '/');
+  }
 
-    if (data.status === "success") {
-      document.getElementById("recoveredPassword").textContent = "Your password is: " + data.password;
-    } else {
-      document.getElementById("recoveredPassword").textContent = "Incorrect answer or user not found.";
+  function updateUserUI() {
+    const name = localStorage.getItem("username");
+    if (signInBtn) {
+      if (name) {
+        signInBtn.textContent = name;
+        signInBtn.classList.remove("bg-pink-600");
+        signInBtn.classList.add("bg-green-600");
+      } else {
+        signInBtn.textContent = "Sign in";
+        signInBtn.classList.remove("bg-green-600");
+        signInBtn.classList.add("bg-pink-600");
+      }
     }
-  } catch (err) {
-    alert("Recovery failed.");
-    console.error(err);
   }
-}
-function updateUserUI() {
-  const name = localStorage.getItem("username");
-  const signInBtn = document.querySelector("#signInBtn");
 
-  if (name) {
-    signInBtn.textContent = name;
-    signInBtn.classList.remove("bg-pink-600");
-    signInBtn.classList.add("bg-green-600");
-  } else {
-    signInBtn.textContent = "Sign in";
-    signInBtn.classList.remove("bg-green-600");
-    signInBtn.classList.add("bg-pink-600");
-  }
-}
-
-updateUserUI(); // show user name if logged in
-document.getElementById("signInBtn").addEventListener("click", () => {
-  const name = localStorage.getItem("username");
-  if (name) {
-    if (confirm(`You're logged in as ${name}. Do you want to logout?`)) {
-      localStorage.removeItem("username");
-      updateUserUI();
-    }
-  } else {
-    openModal(); // show login/signup modal
-  }
-});
-function logout() {
-  // Clear all stored data
-  localStorage.removeItem('user_id');
-  localStorage.removeItem('username');
-  localStorage.removeItem('email');
-  localStorage.removeItem('phone');
-  localStorage.removeItem('isLoggedIn');
-  sessionStorage.clear();
-
-  // Update UI immediately
   updateUserUI();
 
-  // Call Flask logout
-  fetch('/logout')
-    .then(() => {
-      window.location.href = '/';  // Go to home after logout
-    });
-}
-document.getElementById("signInBtn").addEventListener("click", () => {
-  const name = localStorage.getItem("username");
-  if (name) {
-    if (confirm(`You're logged in as ${name}. Do you want to logout?`)) {
-      logout();  // ✅ call full logout
-    }
-  } else {
-    openModal(); // show login/signup modal
+  function showMessage(message, type = "success") {
+    const box = document.getElementById("messageBox");
+    if (!box) return;
+    box.textContent = message;
+    box.classList.remove("hidden");
+    box.className = `p-3 my-2 rounded text-sm font-semibold text-white text-center ${type === "success" ? "bg-green-600" : "bg-red-600"}`;
+    setTimeout(() => box.classList.add("hidden"), 4000);
   }
 });
-function showMessage(message, type = "success") {
-  const box = document.getElementById("messageBox");
-  box.textContent = message;
-  box.classList.remove("hidden");
-
-  box.className = `p-3 my-2 rounded text-sm font-semibold text-white text-center ${type === "success" ? "bg-green-600" : "bg-red-600"
-    }`;
-
-  // Auto-hide after 4 seconds (optional)
-  setTimeout(() => {
-    box.classList.add("hidden");
-  }, 4000);
-}

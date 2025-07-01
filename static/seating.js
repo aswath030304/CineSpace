@@ -165,4 +165,109 @@ async function fetchMovieTitle() {
   await fetchMovieTitle();
   await fetchSoldSeats();
 })();
+function closeModal() {
+  document.getElementById("authModal").classList.add("hidden");
+}
+function toggleToLogin() {
+  document.getElementById("loginForm").classList.remove("hidden");
+  document.getElementById("signupForm").classList.add("hidden");
+  document.getElementById("forgotForm").classList.add("hidden");
+}
 
+function toggleToSignup() {
+  document.getElementById("loginForm").classList.add("hidden");
+  document.getElementById("signupForm").classList.remove("hidden");
+  document.getElementById("forgotForm").classList.add("hidden");
+}
+
+function toggleToForgot() {
+  document.getElementById("loginForm").classList.add("hidden");
+  document.getElementById("signupForm").classList.add("hidden");
+  document.getElementById("forgotForm").classList.remove("hidden");
+}
+
+function showMessage(message, type = "success") {
+  const box = document.getElementById("messageBox");
+  if (!box) return;
+
+  box.textContent = message;
+  box.classList.remove("hidden");
+  box.className = `p-3 my-2 rounded text-sm font-semibold text-white text-center ${type === "success" ? "bg-green-600" : "bg-red-600"}`;
+
+  setTimeout(() => box.classList.add("hidden"), 4000);
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const API_BASEs = "/api";
+
+  // ✅ Login Handler
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+
+    if (!email || !password) {
+      showMessage("Please enter both email and password.", "error");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASEs}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      showMessage(data.message, data.status === "success" ? "success" : "error");
+
+      if (data.status === "success") {
+        localStorage.setItem("user_id", data.user_id);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);
+        closeModal();
+      }
+
+    } catch (err) {
+      showMessage("Login failed. Try again.", "error");
+      console.error(err);
+    }
+  });
+
+  // ✅ Signup Handler
+  document.getElementById("signupBtn").addEventListener("click", async () => {
+    const username = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const phone = document.getElementById("signupPhone").value.trim();
+    const password = document.getElementById("signupPassword").value.trim();
+    const security_question = document.getElementById("signupQuestion").value;
+    const security_answer = document.getElementById("signupAnswer").value.trim();
+
+    if (!username || !email || !phone || !password || !security_question || !security_answer) {
+      showMessage("Please fill all fields.", "error");
+      return;
+    }
+
+    const pwdRegex = /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+    if (!pwdRegex.test(password)) {
+      showMessage("Password must be at least 8 characters, include 1 capital letter and 1 special character.", "error");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASEs}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, phone, password, security_question, security_answer })
+      });
+
+      const data = await res.json();
+      showMessage(data.message, data.status === "success" ? "success" : "error");
+
+      if (data.status === "success") {
+        toggleToLogin();
+      }
+    } catch (err) {
+      showMessage("Signup failed. Try again.", "error");
+      console.error(err);
+    }
+  });
+});

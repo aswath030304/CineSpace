@@ -1,43 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Movie Details - CineSpace</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Details - CineSpace</title>
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- JS + CSS via Flask -->
-  <script defer src="{{ url_for('static', filename='moviedetails.js') }}"></script>
-  <script defer src="{{ url_for('static', filename='script.js') }}"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='input.css') }}" />
+    <!-- JS + CSS via Flask -->
+    <script defer src="{{ url_for('static', filename='moviedetails.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='input.css') }}" />
 
-  <!-- FontAwesome -->
-  <script src="https://kit.fontawesome.com/be44ae3e09.js" crossorigin="anonymous"></script>
+    <!-- FontAwesome -->
+    <script src="https://kit.fontawesome.com/be44ae3e09.js" crossorigin="anonymous"></script>
 </head>
+
 <body class="bg-gray-50 text-gray-800 font-sans">
 
-  <!-- ✅ Navbar: Updated links to use url_for -->
-  <nav class="bg-white border-b shadow">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <div class="flex">
-        <img class="w-11" src="{{ url_for('static', filename='assets/image/Logo.png') }}" alt="Logo">
-        <div class="flex items-center space-x-3">
-          <a href="{{ url_for('index') }}"><span class="text-2xl font-bold text-red-500">Cine<span
-                class="text-[#0a2540]">Space</span></span></a>
-        </div>
-      </div>
+    <!-- ✅ Navbar: Updated links to use url_for -->
+    <nav class="bg-white border-b shadow">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex">
+                <img class="w-11" src="{{ url_for('static', filename='assets/image/Logo.png') }}" alt="Logo">
+                <div class="flex items-center space-x-3">
+                    <a href="{{ url_for('index') }}"><span class="text-2xl font-bold text-red-500">Cine<span
+                                class="text-[#0a2540]">Space</span></span></a>
+                </div>
+            </div>
 
-      <!-- Search & Categories -->
-      <div class="hidden md:flex space-x-4 ml-6 items-center">
-        <div class="relative">
-          <input id="search-input"
-            class="px-3 py-2 border rounded-md text-sm w-52 focus:outline-none focus:ring-2 focus:ring-red-500"
-            type="text" placeholder="Search for Movies" />
-          <div id="search-results"
-            class="absolute left-0 w-full bg-white border border-gray-200 rounded shadow-md mt-1 z-50 hidden max-h-64 overflow-y-auto text-sm"></div>
-        </div>
+            <!-- Search & Categories -->
+            <div class="hidden md:flex space-x-4 ml-6 items-center">
+                <div class="relative">
+                    <input id="search-input"
+                        class="px-3 py-2 border rounded-md text-sm w-52 focus:outline-none focus:ring-2 focus:ring-red-500"
+                        type="text" placeholder="Search for Movies" />
+                    <div id="search-results"
+                        class="absolute left-0 w-full bg-white border border-gray-200 rounded shadow-md mt-1 z-50 hidden max-h-64 overflow-y-auto text-sm">
+                    </div>
+                </div>
                 <div class="flex space-x-6 text-sm font-medium">
                     <a href="{{ url_for('genre_page') }}?genre=comedy"
                         class="nav-link text-gray-700 hover:text-red-500">Comedy</a>
@@ -53,54 +56,60 @@
                         class="nav-link text-gray-700 hover:text-red-500">Fantasy</a>
                     <a href="{{ url_for('orders') }}" class="nav-link text-gray-700 hover:text-red-500">Orders</a>
                 </div>
-      </div>
 
-      <!-- Profile/Sign In -->
-      <div class="flex items-center space-x-6">
-        <button onclick="openModal()" id="signInBtn"
-          class="bg-pink-600 text-white px-3 py-2 rounded text-sm max-w-[100px] overflow-hidden whitespace-nowrap text-ellipsis">
-          Sign in
-        </button>
-        <div class="relative">
-          <button id="profile-button">
-            <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="User"
-              class="w-10 h-10 rounded-full bg-gray-200 object-contain" />
-          </button>
-          <div id="profile-dropdown"
-            class="hidden absolute right-0 mt-2 bg-white border shadow-lg rounded-md w-40 z-50">
-            <a href="{{ url_for('profile') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
-            <a href="{{ url_for('orders') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">Orders</a>
-            <a href="#" onclick="logout()" class="block px-4 py-2 text-sm hover:bg-gray-100">Logout</a>
-          </div>
+            </div>
+
+            <!-- Profile/Sign In -->
+            <div class="flex items-center space-x-6">
+                <button onclick="openModal()" id="signInBtn"
+                    class="bg-pink-600 text-white px-3 py-2 rounded text-sm max-w-[100px] overflow-hidden whitespace-nowrap text-ellipsis">
+                    Sign in
+                </button>
+                <div class="relative">
+                    <button id="profile-button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="User"
+                            class="w-10 h-10 rounded-full bg-gray-200 object-contain" />
+                    </button>
+                    <div id="profile-dropdown"
+                        class="hidden absolute right-0 mt-2 bg-white border shadow-lg rounded-md w-40 z-50">
+                        <a href="{{ url_for('profile') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
+                        <a href="{{ url_for('orders') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">Orders</a>
+                        <a href="#" onclick="logout()" class="block px-4 py-2 text-sm hover:bg-gray-100">Logout</a>
+                    </div>
+                </div>
+
+                <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
-        <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu"
-      class="hidden md:hidden px-4 pb-4 space-y-4 relative z-50 bg-white shadow-md rounded-b-lg">
-      <div class="relative">
-        <input id="mobile-search-input" type="text" placeholder="Search"
-          class="w-full px-4 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
-        <div id="mobile-search-results"
-          class="absolute left-0 w-full bg-white border border-gray-200 rounded shadow-md mt-1 z-50 hidden max-h-64 overflow-y-auto text-sm"></div>
-      </div>
-      <a href="{{ url_for('genre_page') }}?genre=comedy" class="block text-gray-700 hover:text-red-500">Comedy</a>
-      <a href="{{ url_for('genre_page') }}?genre=action" class="block text-gray-700 hover:text-red-500">Action</a>
-      <a href="{{ url_for('genre_page') }}?genre=thriller" class="block text-gray-700 hover:text-red-500">Thriller</a>
-      <a href="{{ url_for('genre_page') }}?genre=science fiction" class="block text-gray-700 hover:text-red-500">Sci-Fi</a>
-      <a href="{{ url_for('genre_page') }}?genre=romance" class="block text-gray-700 hover:text-red-500">Romance</a>
-      <a href="{{ url_for('genre_page') }}?genre=fantasy" class="block text-gray-700 hover:text-red-500">Fantasy</a>
-      <a href="{{ url_for('orders') }}" class="block text-gray-700 hover:text-red-500">Orders</a>
-    </div>
-  </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden md:hidden px-4 pb-4 space-y-4 relative z-50 bg-white shadow-md rounded-b-lg">
+            <div class="relative">
+                <input id="mobile-search-input" type="text" placeholder="Search"
+                    class="w-full px-4 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+                <div id="mobile-search-results"
+                    class="absolute left-0 w-full bg-white border border-gray-200 rounded shadow-md mt-1 z-50 hidden max-h-64 overflow-y-auto text-sm">
+                </div>
+            </div>
+            <a href="{{ url_for('genre_page') }}?genre=comedy" class="block text-gray-700 hover:text-red-500">Comedy</a>
+            <a href="{{ url_for('genre_page') }}?genre=action" class="block text-gray-700 hover:text-red-500">Action</a>
+            <a href="{{ url_for('genre_page') }}?genre=thriller"
+                class="block text-gray-700 hover:text-red-500">Thriller</a>
+            <a href="{{ url_for('genre_page') }}?genre=science fiction"
+                class="block text-gray-700 hover:text-red-500">Sci-Fi</a>
+            <a href="{{ url_for('genre_page') }}?genre=romance"
+                class="block text-gray-700 hover:text-red-500">Romance</a>
+            <a href="{{ url_for('genre_page') }}?genre=fantasy"
+                class="block text-gray-700 hover:text-red-500">Fantasy</a>
+            <a href="{{ url_for('orders') }}" class="block text-gray-700 hover:text-red-500">Orders</a>
+        </div>
+    </nav>
 
     <main class="max-w-6xl mx-auto px-4 py-8 bg-white rounded-lg shadow-md">
         <!-- Poster + Info -->
@@ -163,36 +172,55 @@
         </section>
     </main>
 
-     <!-- ✅ Footer: Admin login -->
-  <footer class="bg-[#2a2b2b] text-gray-400 text-center py-10 mt-12">
-    <div class="flex justify-center items-center mb-6">
-      <span class="text-3xl font-bold text-red-500">Cine<span class="text-white">Space</span></span>
-    </div>
-    <hr class="border-gray-500 w-11/12 mx-auto mb-6" />
-    <div class="flex justify-center space-x-6 mb-6">
-      <a href="#" class="hover:text-white text-2xl"><i class="fab fa-facebook-f"></i></a>
-      <a href="#" class="hover:text-white text-2xl"><i class="fab fa-x-twitter"></i></a>
-      <a href="#" class="hover:text-white text-2xl"><i class="fab fa-instagram"></i></a>
-      <a href="#" class="hover:text-white text-2xl"><i class="fab fa-youtube"></i></a>
-      <a href="#" class="hover:text-white text-2xl"><i class="fab fa-pinterest-p"></i></a>
-      <a href="#" class="hover:text-white text-2xl"><i class="fab fa-linkedin-in"></i></a>
-    </div>
-    <div class="mt-6">
-      <p class="text-sm text-gray-300">
-        🎯 In Partnership with
-        <a href="#" class="text-red-400 underline hover:text-red-600">CinePark</a>
-      </p>
-    </div>
-    <div class="mt-4">
-      <a href="{{ url_for('admin_login') }}" class="text-xs text-gray-400 hover:text-red-400 underline">Admin Login</a>
-    </div>
-    <p class="text-sm px-6 max-w-4xl mx-auto">
-      © 2025 CineSpace. All rights reserved.
-    </p>
-  </footer>
+    <!-- ✅ Footer: Admin login -->
+    <footer class="bg-[#2a2b2b] text-gray-400 text-center py-10 mt-12">
+        <!-- Logo -->
+        <div class="flex justify-center items-center mb-6">
+            <span class="text-3xl font-bold text-red-500">Cine<span class="text-white">Space</span></span>
+        </div>
+
+        <hr class="border-gray-500 w-11/12 mx-auto mb-6" />
+
+        <!-- Social Icons -->
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="#" class="hover:text-white text-2xl"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="hover:text-white text-2xl"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" class="hover:text-white text-2xl"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="hover:text-white text-2xl"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="hover:text-white text-2xl"><i class="fab fa-pinterest-p"></i></a>
+            <a href="#" class="hover:text-white text-2xl"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+
+        <!-- Partner Site Info -->
+        <div class="mt-6">
+            <p class="text-sm text-gray-300">
+                🎯 In Partnership with
+                <a href="#" class="text-red-400 underline hover:text-red-600" target="_blank">
+                    CinePark
+                </a> – Reserve your parking spot hassle-free near cinemas!
+            </p>
+        </div>
+
+        <!-- Admin Login Link -->
+        <div class="mt-4">
+            <a href="/admin/login" class="text-xs text-gray-400 hover:text-red-400 underline">
+                Admin Login
+            </a>
+        </div>
+
+        <!-- Copyright -->
+        <p class="text-sm px-6 max-w-4xl mx-auto mt-4">
+            Copyright © 2025 CineSpace. All rights reserved.
+            The content and images used on this site are copyright protected.
+            Unauthorized use is strictly prohibited and punishable by law.
+        </p>
+    </footer>
     <!-- Authorization Modal -->
     <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white p-8 rounded-lg w-full max-w-md relative">
+            <!-- Message Container -->
+            <div id="messageBox" class="hidden p-3 my-2 rounded text-sm font-semibold text-white text-center"></div>
+
             <button onclick="closeModal()" class="absolute top-2 right-3 text-gray-500 text-xl font-bold">×</button>
 
             <!-- Login Form -->
@@ -205,9 +233,11 @@
                 <button id="loginBtn"
                     class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
 
-                <div class="flex justify-between mt-4 text-sm">
-                    <a href="#" onclick="toggleToForgot()" class="text-blue-500 hover:underline">Forgot password?</a>
-                    <a href="#" onclick="toggleToSignup()" class="text-blue-500 hover:underline">New user? Sign up</a>
+                <div class="flex justify-between mt-4 text-sm ">
+                    <a onclick="toggleToForgot()" class="text-blue-500 hover:underline cursor-pointer">Forgot
+                        password?</a>
+                    <a onclick="toggleToSignup()" class="text-blue-500  hover:underline cursor-pointer">New user? Sign
+                        up</a>
                 </div>
             </div>
 
@@ -218,6 +248,9 @@
                     class="w-full mb-3 p-2 border rounded" />
                 <input type="email" id="signupEmail" required placeholder="Email"
                     class="w-full mb-3 p-2 border rounded" />
+                <input type="tel" id="signupPhone" required placeholder="Phone Number"
+                    class="w-full mb-3 p-2 border rounded" />
+
                 <input type="password" id="signupPassword" required placeholder="Password"
                     class="w-full mb-3 p-2 border rounded" />
 

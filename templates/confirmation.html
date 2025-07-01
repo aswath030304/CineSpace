@@ -2,64 +2,150 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <title>Booking Confirmation - CineSpace</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Your CineSpace movie ticket booking confirmation with QR code and seat details." />
-  <link rel="icon" href="{{ url_for('static', filename='assets/image/Logo.png') }}" type="image/png">
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <title>Booking Confirmation - CineSpace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Your CineSpace movie ticket booking confirmation with QR code and seat details." />
+    <link rel="icon" href="{{ url_for('static', filename='assets/image/Logo.png') }}" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 
 <body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center px-4">
 
-  <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
-    <h1 class="text-3xl font-bold mb-4 text-green-600">🎉 Booking Confirmed!</h1>
+    <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+        <h1 class="text-3xl font-bold mb-4 text-green-600">🎉 Booking Confirmed!</h1>
 
-    <div class="mb-6 text-left text-base">
-      <p class="mb-2"><span class="font-semibold text-gray-700">🎬 Movie:</span> {{ movie_name or 'Unknown' }}</p>
-      <p class="mb-2"><span class="font-semibold text-gray-700">📅 Date:</span> {{ show_date or 'N/A' }}</p>
-      <p class="mb-2"><span class="font-semibold text-gray-700">⏰ Time:</span> {{ show_time or 'N/A' }}</p>
-      <p class="mb-2"><span class="font-semibold text-gray-700">💺 Seats:</span> {{ seat_numbers or 'N/A' }}</p>
-      <p class="mt-4 text-lg font-bold text-blue-700">Total Price: ₹{{ total_price or 200 }}</p>
+        <div class="mb-6 text-left text-base">
+            <p class="mb-2"><span class="font-semibold text-gray-700">🎬 Movie:</span> <span id="movieName">{{
+                    movie_name or 'Unknown' }}</span></p>
+            <p class="mb-2"><span class="font-semibold text-gray-700">📅 Date:</span> <span id="showDate">{{ show_date
+                    or 'N/A' }}</span></p>
+            <p class="mb-2"><span class="font-semibold text-gray-700">⏰ Time:</span> <span id="showTime">{{ show_time or
+                    'N/A' }}</span></p>
+            <p class="mb-2"><span class="font-semibold text-gray-700">💺 Seats:</span> <span id="seatNumbers">{{
+                    seat_numbers or 'N/A' }}</span></p>
+
+            <p class="mt-4 text-lg font-bold text-blue-700">Total Price: ₹{{ total_price or 200 }}</p>
+        </div>
+
+        <div class="mb-6">
+            <img id="qrCodeImage" src="" alt="QR Code" class="mx-auto w-40 h-40 border rounded shadow-lg" />
+
+
+        </div>
+
+        <a href="{{ url_for('index') }}"
+            class="inline-block mt-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md shadow transition">
+            ⬅ Back to Home
+        </a>
     </div>
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-8 rounded-lg w-full max-w-md relative">
+            <!-- Message Container -->
+            <div id="messageBox" class="hidden p-3 my-2 rounded text-sm font-semibold text-white text-center"></div>
 
-    <div class="mb-6">
-      <p class="font-medium mb-2">📲 Scan this QR Code at Entry:</p>
-      {% if qr_code_url %}
-        <img src="{{ qr_code_url }}" alt="QR Code" class="mx-auto w-40 h-40 border rounded shadow-lg" />
-      {% else %}
-        <div class="w-40 h-40 flex items-center justify-center mx-auto border rounded bg-gray-100 text-sm text-gray-500">QR Not Available</div>
-      {% endif %}
+            <button onclick="closeModal()" class="absolute top-2 right-3 text-gray-500 text-xl font-bold">×</button>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
+                <input type="email" id="loginEmail" required placeholder="Email"
+                    class="w-full mb-3 p-2 border rounded" />
+                <input type="password" id="loginPassword" required placeholder="Password"
+                    class="w-full mb-3 p-2 border rounded" />
+                <button id="loginBtn"
+                    class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+
+                <div class="flex justify-between mt-4 text-sm ">
+                    <a onclick="toggleToForgot()" class="text-blue-500 hover:underline cursor-pointer">Forgot
+                        password?</a>
+                    <a onclick="toggleToSignup()" class="text-blue-500  hover:underline cursor-pointer">New user? Sign
+                        up</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="hidden">
+                <h2 class="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+                <input type="text" id="signupName" required placeholder="Full Name"
+                    class="w-full mb-3 p-2 border rounded" />
+                <input type="email" id="signupEmail" required placeholder="Email"
+                    class="w-full mb-3 p-2 border rounded" />
+                <input type="tel" id="signupPhone" required placeholder="Phone Number"
+                    class="w-full mb-3 p-2 border rounded" />
+
+                <input type="password" id="signupPassword" required placeholder="Password"
+                    class="w-full mb-3 p-2 border rounded" />
+
+                <select id="signupQuestion" required class="w-full mb-3 p-2 border rounded">
+                    <option value="">Select a Security Question</option>
+                    <option value="What is your favorite movie?">What is your favorite movie?</option>
+                    <option value="What was your first pet's name?">What was your first pet's name?</option>
+                    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                </select>
+
+                <input type="text" id="signupAnswer" required placeholder="Security Answer"
+                    class="w-full mb-3 p-2 border rounded" />
+                <button id="signupBtn" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Sign
+                    Up</button>
+
+                <div class="text-center mt-4 text-sm">
+                    Already have an account? <a href="#" class="text-blue-500 hover:underline"
+                        onclick="toggleToLogin()">Login</a>
+                </div>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div id="forgotForm" class="hidden">
+                <h2 class="text-2xl font-bold mb-4 text-center">Recover Password</h2>
+                <input id="forgotEmail" required type="email" placeholder="Enter your email"
+                    class="w-full mb-3 p-2 border rounded" />
+                <input id="forgotQuestion" required type="text" placeholder="Security Question"
+                    class="w-full mb-3 p-2 border rounded" />
+                <input id="answerInput" required type="text" placeholder="Your Answer"
+                    class="w-full mb-3 p-2 border rounded" />
+
+                <button onclick="verifyAnswer()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+                    Verify & Show Password
+                </button>
+
+                <p id="recoveredPassword" class="text-red-600 mt-3 text-center font-semibold"></p>
+
+                <div class="text-center mt-4 text-sm">
+                    Remembered? <a href="#" class="text-blue-500 hover:underline" onclick="toggleToLogin()">Back to
+                        Login</a>
+                </div>
+            </div>
+        </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const qr = urlParams.get("qr");
+            const movie = urlParams.get("movie");
+            const seats = urlParams.get("seats");
+            const date = urlParams.get("date");
+            const time = urlParams.get("time");
 
-    <a href="{{ url_for('home') }}" class="inline-block mt-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md shadow transition">
-      ⬅ Back to Home
-    </a>
-  </div>
-  <script>
-    // Read data from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const qr = urlParams.get("qr");
-    const movie = urlParams.get("movie");
-    const seats = urlParams.get("seats");
-    const date = urlParams.get("date");
-    const time = urlParams.get("time");
+            const movieName = document.getElementById("movieName");
+            const showDate = document.getElementById("showDate");
+            const showTime = document.getElementById("showTime");
+            const seatNumbers = document.getElementById("seatNumbers");
+            const qrCodeImg = document.getElementById("qrCodeImage");
 
-    // Fill in the data or show fallback
-    document.getElementById("movieName").textContent = movie ? decodeURIComponent(movie) : "Unknown";
-    document.getElementById("showDate").textContent = date || "Not available";
-    document.getElementById("showTime").textContent = time || "Not available";
-    document.getElementById("seatNumbers").textContent = seats || "Not available";
+            if (movieName) movieName.textContent = movie ? decodeURIComponent(movie) : "Unknown";
+            if (showDate) showDate.textContent = date || "Not available";
+            if (showTime) showTime.textContent = time || "Not available";
+            if (seatNumbers) seatNumbers.textContent = seats || "Not available";
 
-    // Handle QR code image
-    const qrCodeImg = document.getElementById("qrCodeImage");
-    if (qr) {
-      qrCodeImg.src = decodeURIComponent(qr);
-    } else {
-      qrCodeImg.alt = "QR code not available";
-      qrCodeImg.classList.add("opacity-50");
-    }
-  </script>
+            if (qrCodeImg && qr) {
+                qrCodeImg.src = decodeURIComponent(qr);
+            }
+        });
+    </script>
+
 
 </body>
 

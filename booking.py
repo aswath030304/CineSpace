@@ -2,11 +2,14 @@ from flask import Blueprint, request, jsonify
 import sqlite3, os, qrcode
 import requests
 from datetime import datetime
+
 booking_bp = Blueprint('booking', __name__)  
 DB_PATH = 'database/cinespace.db'
 
+
 def get_db():
     return sqlite3.connect(DB_PATH)
+
 
 @booking_bp.route('/book', methods=['POST'])
 def book_ticket():
@@ -30,6 +33,7 @@ def book_ticket():
     os.makedirs(qr_folder, exist_ok=True)
     filename = f"{data['user_id']}_{int(datetime.now().timestamp())}.png"
     qr_path = os.path.join(qr_folder, filename)
+
     try:
         qrcode.make(summary).save(qr_path)
 
@@ -54,13 +58,15 @@ def book_ticket():
                 "time": data['show_time'],
                 "seats": seat_str,
                 "price": 200,
-                "qr_code": f"/{qr_path}"
+                "qr_code": "/" + qr_path.replace("\\", "/")
             }
         })
+
     except Exception as e:
         print("❌ Booking Error:", e)
         return jsonify({"status": "fail", "message": "Booking failed, internal error."})
-    
+
+
 @booking_bp.route('/sold-seats', methods=['GET'])
 def get_sold_seats():
     movie_id = request.args.get('movie_id')
@@ -86,6 +92,8 @@ def get_sold_seats():
             sold.add(seat.strip())
 
     return jsonify({"status": "success", "sold_seats": list(sold)})
+
+
 @booking_bp.route('/get_orders', methods=['GET'])
 def get_orders():
     user_id = request.args.get('user_id')
@@ -95,7 +103,11 @@ def get_orders():
     try:
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("SELECT movie_id, movie_title, show_date, show_time, seats, price, qr_code_path FROM bookings WHERE user_id=?", (user_id,))
+        cur.execute('''
+            SELECT movie_id, movie_title, show_date, show_time, seats, price, qr_code_path 
+            FROM bookings 
+            WHERE user_id=?
+        ''', (user_id,))
         rows = cur.fetchall()
         conn.close()
 
@@ -106,7 +118,6 @@ def get_orders():
             # 🧠 Fetch poster from TMDB API
             poster_path = ""
             try:
-                import requests
                 tmdb_url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=08cea072574b840d375fdec0cee559a1"
                 r = requests.get(tmdb_url)
                 if r.status_code == 200:
